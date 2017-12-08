@@ -71,11 +71,10 @@ public class AdvertiserService extends Service {
 
     @Override
     public void onDestroy() {
-        /**
-         * Note that onDestroy is not guaranteed to be called quickly or at all. Services exist at
-         * the whim of the system, and onDestroy can be delayed or skipped entirely if memory need
-         * is critical.
-         */
+
+        // Note that onDestroy is not guaranteed to be called quickly or at all. Services exist at
+        // the whim of the system, and onDestroy can be delayed or skipped entirely if memory need
+        // is critical.
         running = false;
         stopAdvertising();
         mHandler.removeCallbacks(timeoutRunnable);
