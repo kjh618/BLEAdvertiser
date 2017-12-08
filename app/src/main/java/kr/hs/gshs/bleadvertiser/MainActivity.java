@@ -14,9 +14,8 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 /**
+ * Ensure the device supports Bluetooth.
  * Allows user to start & stop Bluetooth LE Advertising of their device.
- *
- * Setup display fragments and ensure the device supports Bluetooth.
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -31,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Listens for notifications that the {@code AdvertiserService} has failed to start advertising.
-     * This Receiver deals with Fragment UI elements and only needs to be active when the Fragment
+     * This Receiver deals with Activity UI elements and only needs to be active when the Activity
      * is on-screen, so it's defined and registered in code instead of the Manifest.
      */
     private BroadcastReceiver advertisingFailureReceiver;

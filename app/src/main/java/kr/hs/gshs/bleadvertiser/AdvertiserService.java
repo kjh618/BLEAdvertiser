@@ -33,7 +33,7 @@ public class AdvertiserService extends Service {
     private static final int FOREGROUND_NOTIFICATION_ID = 1;
 
     /**
-     * A global variable to let AdvertiserFragment check if the Service is running without needing
+     * A global variable to let MainActivity check if the Service is running without needing
      * to start or bind to it.
      * This is the best practice method as defined here:
      * https://groups.google.com/forum/#!topic/android-developers/jEvXMWgbgzE
@@ -216,7 +216,7 @@ public class AdvertiserService extends Service {
 
     /**
      * Custom callback after Advertising succeeds or fails to start. Broadcasts the error code
-     * in an Intent to be picked up by AdvertiserFragment and stops this Service.
+     * in an Intent to be picked up by MainActivity and stops this Service.
      */
     private class SampleAdvertiseCallback extends AdvertiseCallback {
 
@@ -239,7 +239,7 @@ public class AdvertiserService extends Service {
 
     /**
      * Builds and sends a broadcast intent indicating Advertising has failed. Includes the error
-     * code as an extra. This is intended to be picked up by the {@code AdvertiserFragment}.
+     * code as an extra. This is intended to be picked up by the {@code MainActivity}.
      */
     private void sendFailureIntent(int errorCode){
         Intent failureIntent = new Intent();
