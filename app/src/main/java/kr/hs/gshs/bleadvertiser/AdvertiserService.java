@@ -19,6 +19,10 @@ import android.widget.Toast;
 
 import java.util.concurrent.TimeUnit;
 
+import kr.hs.gshs.blebeaconprotocollibrary.AdvertiseDataBuilder;
+import kr.hs.gshs.blebeaconprotocollibrary.PacketTypes;
+import kr.hs.gshs.blebeaconprotocollibrary.Struct;
+
 /**
  * Manages BLE Advertising independent of the main app.
  * If the app goes off screen (or gets killed completely) advertising can continue because this
@@ -60,13 +64,33 @@ public class AdvertiserService extends Service {
      */
     private long TIMEOUT = TimeUnit.MILLISECONDS.convert(10, TimeUnit.MINUTES);
 
+    private PacketTypes packetType;
+    private Struct[] structs = new Struct[0];
+
     @Override
     public void onCreate() {
-        running = true;
-        initialize();
-        startAdvertising();
-        setTimeout();
         super.onCreate();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent == null) {
+            return Service.START_STICKY;
+        } else {
+            processIntent(intent);
+
+            running = true;
+            initialize();
+            startAdvertising();
+            setTimeout();
+        }
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    private void processIntent(Intent intent) {
+        packetType = PacketTypes.fromOrdinal(intent.getIntExtra("packetType", 0));
+        structs = intent.getParcelableArrayListExtra("structs").toArray(structs);
     }
 
     @Override
@@ -138,7 +162,9 @@ public class AdvertiserService extends Service {
 
         if (mAdvertiseCallback == null) {
             AdvertiseSettings settings = buildAdvertiseSettings();
-            AdvertiseData data = buildAdvertiseData();
+
+            AdvertiseData data = AdvertiseDataBuilder.build(packetType, structs);
+
             mAdvertiseCallback = new SampleAdvertiseCallback();
 
             if (mBluetoothLeAdvertiser != null) {
@@ -178,37 +204,12 @@ public class AdvertiserService extends Service {
     }
 
     /**
-     * Returns an AdvertiseData object which includes the Service UUID and Device Name.
-     */
-    private AdvertiseData buildAdvertiseData() {
-
-        /**
-         * Note: There is a strict limit of 31 Bytes on packets sent over BLE Advertisements.
-         *  This includes everything put into AdvertiseData including UUIDs, device info, &
-         *  arbitrary service or manufacturer data.
-         *  Attempting to send packets over this limit will result in a failure with error code
-         *  AdvertiseCallback.ADVERTISE_FAILED_DATA_TOO_LARGE. Catch this error in the
-         *  onStartFailure() method of an AdvertiseCallback implementation.
-         */
-
-        AdvertiseData.Builder dataBuilder = new AdvertiseData.Builder();
-        dataBuilder.addServiceUuid(Service_UUID);
-        dataBuilder.setIncludeDeviceName(true);
-
-        /* For example - this will cause advertising to fail (exceeds size limit) */
-        //String failureData = "asdghkajsghalkxcjhfa;sghtalksjcfhalskfjhasldkjfhdskf";
-        //dataBuilder.addServiceData(Constants.Service_UUID, failureData.getBytes());
-
-        return dataBuilder.build();
-    }
-
-    /**
      * Returns an AdvertiseSettings object set to use low power (to help preserve battery life)
      * and disable the built-in timeout since this code uses its own timeout runnable.
      */
     private AdvertiseSettings buildAdvertiseSettings() {
         AdvertiseSettings.Builder settingsBuilder = new AdvertiseSettings.Builder();
-        settingsBuilder.setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER);
+        settingsBuilder.setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_LATENCY);
         settingsBuilder.setTimeout(0);
         return settingsBuilder.build();
     }
