@@ -13,8 +13,7 @@
         android:ellipsize="end"
         android:gravity="center"
         android:textColor="#000000"
-        android:textSize="16sp"
-        android:text="Len." />
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/textViewType"
@@ -25,8 +24,7 @@
         android:ellipsize="end"
         android:gravity="center"
         android:textColor="#000000"
-        android:textSize="16sp"
-        android:text="Type" />
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/textViewData"
@@ -37,6 +35,5 @@
         android:ellipsize="end"
         android:gravity="center"
         android:textColor="#000000"
-        android:textSize="16sp"
-        android:text="Data" />
+        android:textSize="16sp" />
 </LinearLayout>
